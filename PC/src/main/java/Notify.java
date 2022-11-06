@@ -6,12 +6,23 @@ import java.util.List;
 public class Notify {
     static String OS;
     static SystemTray systemTray = null;
+    static TrayIcon trayIcon = null;
+    static String trayIconPath = Send.getResource("icon");
     static StringBuilder stringBuilder = new StringBuilder();
 
     static {
         OS = System.getProperty("os.name").toLowerCase();
         if (SystemTray.isSupported()){
             systemTray = SystemTray.getSystemTray();
+            Image image = Toolkit.getDefaultToolkit().getImage(trayIconPath);
+            trayIcon = new TrayIcon(image,"MSG");
+//            trayIcon.setImageAutoSize(true);
+            trayIcon.setToolTip("ToolTip?");
+            try {
+                systemTray.add(trayIcon);
+            } catch (AWTException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -21,13 +32,10 @@ public class Notify {
         System.out.println("IconPath: "+iconPath);
         try {
             String[] cmd = null;
-            switch (OS){
-                case "linux":
-                    cmd = linux_sendMSG(title, content, iconPath);
-                    break;
-                case "windows":
-                    cmd = win_sendMSG(title, content, iconPath);
-                    break;
+            if (OS.contains("linux")){
+                cmd = linux_sendMSG(title, content, iconPath);
+            } else if (OS.contains("windows")) {
+                cmd = win_sendMSG(title, content, iconPath);
             }
             if (cmd != null && !cmd.equals("")){
                 for (String i:cmd){
@@ -85,21 +93,19 @@ public class Notify {
     }
 
     public static String[] win_sendMSG(String title, String content, String iconPath) throws AWTException {
-        Image image = Toolkit.getDefaultToolkit().getImage(iconPath);
-        TrayIcon trayIcon = new TrayIcon(image,"MSG");
-        trayIcon.setImageAutoSize(true);
-        trayIcon.setToolTip("ToolTip?");
-        systemTray.add(trayIcon);
+
         trayIcon.displayMessage(title, content, TrayIcon.MessageType.INFO);
-        return new String[]{"echo","shit"};
+        return new String[]{"cmd","/c","echo","shit"};
     }
 
-//    public static void main(String[] args) throws IOException {
-////        sendMSG("title", "content", "/home/moiiii/ideaProjects/NotiRecieve/res/icon/android_default.png");
-////        String cmd = "notify-send \"This is a Test send\" \"Content said yes\" -i /home/moiiii/ideaProjects/NotiRecieve/target/classes/icon/com.tencent.mobileqq.png \n";
-////        cmd.split(" ");
+    public static void main(String[] args) throws IOException, AWTException {
+//        sendMSG("title", "content", "/home/moiiii/ideaProjects/NotiRecieve/res/icon/android_default.png");
+//        String cmd = "notify-send \"This is a Test send\" \"Content said yes\" -i /home/moiiii/ideaProjects/NotiRecieve/target/classes/icon/com.tencent.mobileqq.png \n";
+//        cmd.split(" ");
 //        String[] cmd = new String[]{"notify-send", "This is a test", "Content said yes", "-i", "/home/moiiii/ideaProjects/NotiRecieve/target/classes/icon/com.tencent.mobileqq.png"};
 //        Process a = Runtime.getRuntime().exec(cmd);
-////        System.out.println(new BufferedReader(new InputStreamReader(a.getInputStream())).readLine());
-//    }
+//        System.out.println(new BufferedReader(new InputStreamReader(a.getInputStream())).readLine());
+//        System.out.printf(OS);
+//        sendMSG("Test","test","");
+    }
 }
