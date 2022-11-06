@@ -17,7 +17,7 @@ sudo apt-get install libnotify-bin
 每个通知被抓下来之后会在主页放着，抓取时会自动发送，也可以长按被抓下来的通知重新发送一次(测试时用)
 按setip按钮可以设置ip和端口
 
-电脑端运行(JRE17 MAVEN):  
+电脑端运行(JRE17):  
 ```shell
 java -jar NotifySend.jar
 ```
